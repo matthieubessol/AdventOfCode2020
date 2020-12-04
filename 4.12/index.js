@@ -19,10 +19,6 @@ const fieldsInfos = [
     { name: 'cid', required: false, },
 ]
 
-const requiredFieldsName = fieldsInfos.filter(f => f.required).map(f => f.name)
-
-const containsFields = (str, fields) => fields.every((field) => str.indexOf(`${field}`) !== -1)
-
 const respectColorRule = ({colors}, colorValue) => colors.some((color) => colorValue.indexOf(color) !== -1)
 
 const respectYearRule = ({min, max}, yearStr) => {
@@ -55,11 +51,15 @@ const respectHeightRule = (field, height) => {
 
 const respectIdRule = (_, value) => !!value.match(/\d{9}/) && value.length === 9
 
-const respectRules = (str, fields) => {
+const respectRules = (str, fields, checkRules = true) => {
     const res = fields.filter(f => f.required).every((field) => {
         
-        if(str.indexOf(`${field.name}:`) === -1) {
+        if (str.indexOf(`${field.name}:`) === -1) {
             return false
+        }
+
+        if (!checkRules) {
+            return true
         }
 
         const corres = `${str} `.match(new RegExp(`${field.name}:` + "(.*?)" + ' '))
@@ -94,7 +94,10 @@ const passports = fs
     .map(s => s.replace(/(\r\n|\n|\r)/gm, " "))
 
 // 1
-console.log(passports.filter(s => containsFields(s, requiredFieldsName)).length)
+const nbValidPassports1 = passports.filter(s => respectRules(s, fieldsInfos, false)).length
 
 // 2
-console.log(passports.filter(s => respectRules(s, fieldsInfos)).length)
+const nbValidPassports2 = passports.filter(s => respectRules(s, fieldsInfos)).length
+
+
+console.log(nbValidPassports1, nbValidPassports2)
