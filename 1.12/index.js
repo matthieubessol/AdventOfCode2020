@@ -11,4 +11,6 @@ const res = arr.filter(
     (a) => arr.filter(b => arr.filter(c => c + a + b === 2020).length).length
 )
 
-return console.log(res[0] * res[1] * res[2])
+const total = res.reduce((a, b) => a * b)
+
+return console.log(total)
