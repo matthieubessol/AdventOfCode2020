@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 const arr = fs
-    .readFileSync('./file.txt')
+    .readFileSync('./input.txt')
     .toString()
     .split("\n")
     .map(l => +(l))

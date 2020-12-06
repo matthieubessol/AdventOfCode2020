@@ -3,7 +3,7 @@ const fs = require('fs')
 const TREE_CHAR = '#'
 
 const lines = fs
-    .readFileSync('./input3.txt')
+    .readFileSync('./input.txt')
     .toLocaleString()
     .split('\n')
     .filter(l => l)

@@ -1,9 +1,7 @@
-const { kMaxLength } = require('buffer')
 const fs = require('fs')
-const { format } = require('path')
 
 const formatFile = () => fs
-    .readFileSync('./file.txt')
+    .readFileSync('./input.txt')
     .toString()
     .split("\n")
     .map(l => formatLine(l))
