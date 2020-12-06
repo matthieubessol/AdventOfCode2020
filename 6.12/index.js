@@ -11,7 +11,7 @@ const nbApproval1 = inputs
     .reduce((a, b) => (a.length || a) + b.length)
 
 // 1
-// console.log(nbApproval1)
+console.log(nbApproval1)
 
 // 2
 const secondFormat = inputs
