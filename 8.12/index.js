@@ -26,7 +26,6 @@ const runCode = (oldArr) => {
         }
 
         arr[i].nbTimesPlayed++
-
         switch (arr[i].name) {
             case 'nop':
                 break
@@ -52,21 +51,16 @@ const runCode = (oldArr) => {
 // 1
 console.log(runCode(instructions).accumulator)
 
+// 2
 const jumps = instructions.filter(i => i.name === 'jmp')
 
 console.log(`Brute force ${jumps.length} attempts`)
 
 const value = jumps.map(j => {
-        const newArr = [...instructions].map((inst, index) => {
-            if(index === j.index) {
-                return {
-                    ...j,
-                    name: 'nop'
-                }
-            }
-
-            return inst
-        })
+        const newArr = instructions
+            .map((inst, index) => index === j.index 
+                ? {...inst, name: 'nop'} 
+                : inst)
 
         return runCode(newArr)
     })
