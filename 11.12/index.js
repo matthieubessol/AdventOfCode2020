@@ -10,79 +10,138 @@ let seats = fs
     .split('\n')
     .map(s => s.split(''))
 
-const display = arr => arr.map(s => s.join('')).join('\n')
-
 const isLeftFree = (arr, y, x, byDistance) => {
     if( x === 0 ) return { isFree: true }
-
-    // const arrays = arr[y].slice(b, )
+    const begin = byDistance ? x - 1 : 0
+    const places = arr[y].slice(begin, x)
+    const firstSeat = places.reverse().filter(s => s === EMPTY || s === OCCUPIED)[0]
 
     return {
-        isFree: [EMPTY, FLOOR].includes(arr[y][x - 1]),
-        char: arr[y][x - 1],
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
-}
+}   
 
-const isRightFree = (arr, y, x) => {
+const isRightFree = (arr, y, x, byDistance) => {
     if( x === arr[y].length - 1 ) return { isFree: true }
 
+    const end =  byDistance ? x + 2 : arr[y].length
+    const places = arr[y].slice(x + 1, end)
+    const firstSeat = places.filter(s => s === EMPTY || s === OCCUPIED)[0]
+
     return {
-        isFree: [EMPTY, FLOOR].includes(arr[y][x + 1]),
-        char: arr[y][x + 1],
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
 }
 
-const isTopFree = (arr, y, x) => {
+const isTopFree = (arr, y, x, byDistance) => {
     if( y === 0 ) return { isFree: true }
 
+    const begin = byDistance ? y - 1 : 0
+    const places = arr.slice(begin, y).map(s => s[x])
+    const firstSeat = places.reverse().filter(s => s === EMPTY || s === OCCUPIED)[0]
+
     return {
-        isFree: [EMPTY, FLOOR].includes(arr[y - 1][x]),
-        char: arr[y - 1][x],
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
 }
 
-const isBottomFree = (arr, y, x) => {
+const isBottomFree = (arr, y, x, byDistance) => {
     if( y === arr.length - 1) return { isFree: true }
 
+    const end = byDistance ? y + 2 : arr.length
+    const places = arr.slice(y + 1, end).map(s => s[x])
+    const firstSeat = places.filter(s => s === EMPTY || s === OCCUPIED)[0]
+
     return {
-        isFree: [EMPTY, FLOOR].includes(arr[y + 1][x]),
-        char: arr[y + 1][x],
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
 }
 
-const isTopLeftFree = (arr, y, x) => {
+const isTopLeftFree = (arr, y, x, byDistance) => {
     if( y === 0 || x === 0) return { isFree: true }
 
-    return  {
-        isFree: [EMPTY, FLOOR].includes(arr[y - 1][x - 1]),
-        char: arr[y - 1][x - 1],
+    let places = []
+    let i = x - 1
+    let j = y - 1
+    while(i >= 0 && j >= 0 && arr[j][i]) {
+        places.push(arr[j][i])
+        i--
+        j--
+    }
+
+    places = byDistance ? places.slice(0, 1) : places
+    const firstSeat = places.filter(s => s === EMPTY || s === OCCUPIED)[0]
+
+    return {
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
 }
 
-const isTopRightFree = (arr, y, x) => {
+const isTopRightFree = (arr, y, x, byDistance) => {
     if( y === 0 || x === arr[y].length - 1) return { isFree: true }
 
+    let places = []
+    let i = x + 1
+    let j = y - 1
+    while(i <= arr[y].length - 1 && j >= 0 && arr[j][i]) {
+        places.push(arr[j][i])
+        i++
+        j--
+    }
+
+    places = byDistance ? places.slice(0, 1) : places
+    const firstSeat = places.filter(s => s === EMPTY || s === OCCUPIED)[0]
+
     return {
-        isFree: [EMPTY, FLOOR].includes(arr[y - 1][x + 1]),
-        char: arr[y - 1][x + 1],
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
 }
 
-const isBottomLeftFree = (arr, y, x) => {
+const isBottomLeftFree = (arr, y, x, byDistance) => {
     if( y === arr.length - 1 || x === 0) return { isFree: true }
 
+    let places = []
+    let i = x - 1
+    let j = y + 1
+    while(i >= 0 && j <= arr.length - 1 && arr[j][i]) {
+        places.push(arr[j][i])
+        i--
+        j++
+    }
+
+    places = byDistance ? places.slice(0, 1) : places
+    const firstSeat = places.filter(s => s === EMPTY || s === OCCUPIED)[0]
+
     return {
-        isFree: [EMPTY, FLOOR].includes(arr[y + 1][x - 1]),
-        char: arr[y + 1][x - 1],
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
 }
 
-const isBottomRightFree = (arr, y, x) => {
+const isBottomRightFree = (arr, y, x, byDistance) => {
     if( y === arr.length - 1 || x === arr[y].length - 1) return { isFree: true }
 
+    let places = []
+    let i = x + 1
+    let j = y + 1
+    while(i <= arr[y].length - 1 && j <= arr.length - 1 && arr[j][i]) {
+        places.push(arr[j][i])
+        i++
+        j++
+    }
+
+    places = byDistance ? places.slice(0, 1) : places
+    const firstSeat = places.filter(s => s === EMPTY || s === OCCUPIED)[0]
+
     return {
-        isFree: [EMPTY, FLOOR].includes(arr[y + 1][x + 1]),
-        char: arr[y + 1][x + 1],
+        isFree: firstSeat !== OCCUPIED,
+        char: [firstSeat],
     }
 }
 
@@ -96,16 +155,20 @@ const isSeatFree = (arr, y, x, byDistance) =>
     isBottomLeftFree(arr, y, x, byDistance).isFree &&
     isBottomRightFree(arr, y, x, byDistance).isFree
 
-const nbOccupiedAround = (arr, y, x, byDistance) => [
-    isBottomFree(arr, y, x, byDistance),
-    isTopFree(arr, y, x, byDistance),
-    isLeftFree(arr, y, x, byDistance),
-    isRightFree(arr, y, x, byDistance),
-    isTopRightFree(arr, y, x), byDistance,
-    isTopLeftFree(arr, y, x, byDistance),
-    isBottomLeftFree(arr, y, x, byDistance),
-    isBottomRightFree(arr, y, x, byDistance)
-].map(r => r.char).filter(a => a === OCCUPIED).length
+const nbOccupiedAround = (arr, y, x, byDistance) => 
+    [
+        isBottomFree(arr, y, x, byDistance),
+        isTopFree(arr, y, x, byDistance),
+        isLeftFree(arr, y, x, byDistance),
+        isRightFree(arr, y, x, byDistance),
+        isTopRightFree(arr, y, x, byDistance),
+        isTopLeftFree(arr, y, x, byDistance),
+        isBottomLeftFree(arr, y, x, byDistance),
+        isBottomRightFree(arr, y, x, byDistance)
+    ]
+    .filter(c => c && c.char)
+    .map(r => r.char.join(''))
+.filter(a => a.includes(OCCUPIED)).length
 
 const getNbOccupied = (nbOccupiedNeeded = 4, byDistance = false) => {
     let moves
@@ -132,7 +195,6 @@ const getNbOccupied = (nbOccupiedNeeded = 4, byDistance = false) => {
                 }
                 return s
             })
-
         })
     }
 
