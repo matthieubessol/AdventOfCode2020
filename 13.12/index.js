@@ -1,4 +1,4 @@
-
+// optimized thanks to https://www.reddit.com/r/adventofcode/comments/kc60ri/2020_day_13_can_anyone_give_me_a_hint_for_part_2/
 const { time } = require('console')
 const fs = require('fs')
 
@@ -20,17 +20,11 @@ const buses = lines[1]
 const busesSortedByRest = buses
     .sort((a, b) => a.r - b.r)
 
-// // 1
+// 1
 console.log(busesSortedByRest[0].name * busesSortedByRest[0].r)
 
-// // 2
-const busesArrays = buses
-    .sort((a, b) => a.name - b.name)
-
-
-let allInTimes = false
-let timestamp = 0
-const busesPartTwo = lines[1]
+// 2
+const [firstBus, ...busesPartTwo] = lines[1]
     .split(',')
     .map(s => parseInt(s))
     .map((s, i) => ({
@@ -39,34 +33,19 @@ const busesPartTwo = lines[1]
         r: s - (curTime % s)
     }))
     .filter(s => s.name && s.name !== 'x')
-const firstBus = busesPartTwo[0]
-console.log(busesPartTwo)
 
-var date1 = new Date()
-while(!allInTimes) {
-    if(timestamp % firstBus.name === 0) {
-
-        const ts = new Array(firstBus.name + 1)
-            .fill(0)
-            .map((_, i) => timestamp + i)
-
-        
-        const res = busesPartTwo.every((b) => 
-                ts.some((t, index) => 
-                    t%b.name === 0 && index === b.index
-                )
-            )
-        
-
-        allInTimes = res
-
+let i = 0
+let mult = firstBus.name
+busesPartTwo.forEach(({name, index}) => {
+  while (true) {
+    if ((i + index) % name === 0) {
+      mult *= name
+      break
     }
+    i += mult
+  }
+});
 
-    // allInTimes=true
-    timestamp += firstBus.name
-}
-var date2 = new Date();
-console.log((date2 - date1)/1000)
+console.log(i)
 
 // 556100168221141
-console.log(timestamp - firstBus.name)
